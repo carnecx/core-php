@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../servicios/OferenteServicioClient.php';
 
 $pdo = obtenerConexion();
 
@@ -95,7 +96,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // Al menos un teléfono es requerido (regla explícita de la HU)
     if (empty($telefonos)) {
         $errores['telefonos'] = 'Debe indicar al menos un número de teléfono.';
     } else {
@@ -107,11 +107,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // ---------- Validación del curriculum ----------
     $rutaCurriculumGuardada = null;
     $extension              = null;
     $extensionesPermitidas  = ['pdf', 'doc', 'docx'];
-    $tamanoMaximoBytes      = 5 * 1024 * 1024; // 5 MB
+    $tamanoMaximoBytes      = 5 * 1024 * 1024; 
 
     if (!isset($_FILES['curriculum']) || $_FILES['curriculum']['error'] === UPLOAD_ERR_NO_FILE) {
         $errores['curriculum'] = 'Debe adjuntar su curriculum.';
@@ -128,7 +127,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    // ---------- Si todo es válido, se guarda ----------
     if (empty($errores)) {
         try {
             $nombreArchivo = 'cv_' . preg_replace('/[^A-Za-z0-9]/', '', $identificacion)
@@ -145,110 +143,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $rutaCurriculumGuardada = 'uploads/curriculums/' . $nombreArchivo;
 
-            $pdo->beginTransaction();
+            // Preparar datos para el servicio
+            $datosOferente = [
+                'Identificacion'     => $identificacion,
+                'TipoIdentificacion' => $tipoIdentificacion,
+                'NombreCompleto'     => $nombreCompleto,
+                'FechaNacimiento'    => $fechaNacimiento,
+                'Correos'            => $correos,
+                'Telefonos'          => $telefonos,
+                'RutaCurriculum'     => $rutaCurriculumGuardada,
+                'CodigoConcurso'     => $concurso['codigo_concurso'],
+            ];
 
-            // ¿El oferente ya existe (aplicó antes a otro puesto)?
-            $stmt = $pdo->prepare("SELECT id_oferente FROM oferente WHERE identificacion = :identificacion");
-            $stmt->execute(['identificacion' => $identificacion]);
-            $oferenteExistente = $stmt->fetch();
+            $resultado = registrarOferente($datosOferente);
 
-            if ($oferenteExistente) {
-                $idOferente = (int)$oferenteExistente['id_oferente'];
-
-                // Guardamos el estado anterior para la bitácora antes de actualizar
-                $stmtAnterior = $pdo->prepare("SELECT * FROM oferente WHERE id_oferente = :id");
-                $stmtAnterior->execute(['id' => $idOferente]);
-                $oferenteAnterior = $stmtAnterior->fetch();
-
-                $stmt = $pdo->prepare("
-                    UPDATE oferente
-                    SET tipo_identificacion = :tipo,
-                        nombre_completo = :nombre,
-                        fecha_nacimiento = :fecha,
-                        ruta_curriculum = :ruta
-                    WHERE id_oferente = :id
-                ");
-                $stmt->execute([
-                    'tipo'   => $tipoIdentificacion,
-                    'nombre' => $nombreCompleto,
-                    'fecha'  => $fechaNacimiento,
-                    'ruta'   => $rutaCurriculumGuardada,
-                    'id'     => $idOferente,
-                ]);
-
-                $pdo->prepare("DELETE FROM oferente_correo WHERE id_oferente = :id")
-                    ->execute(['id' => $idOferente]);
-                $pdo->prepare("DELETE FROM oferente_telefono WHERE id_oferente = :id")
-                    ->execute(['id' => $idOferente]);
-
-                registrarBitacora($pdo, 'Actualización de oferente:', [
-                    'anterior' => $oferenteAnterior,
-                    'nuevo'    => [
-                        'id_oferente'         => $idOferente,
-                        'identificacion'      => $identificacion,
-                        'tipo_identificacion' => $tipoIdentificacion,
-                        'nombre_completo'     => $nombreCompleto,
-                        'fecha_nacimiento'    => $fechaNacimiento,
-                        'ruta_curriculum'     => $rutaCurriculumGuardada,
-                    ],
-                ]);
+            if ($resultado['Exito']) {
+                $guardadoExitoso = true;
             } else {
-                $stmt = $pdo->prepare("
-                    INSERT INTO oferente (identificacion, tipo_identificacion, nombre_completo, fecha_nacimiento, ruta_curriculum)
-                    VALUES (:identificacion, :tipo, :nombre, :fecha, :ruta)
-                ");
-                $stmt->execute([
-                    'identificacion' => $identificacion,
-                    'tipo'           => $tipoIdentificacion,
-                    'nombre'         => $nombreCompleto,
-                    'fecha'          => $fechaNacimiento,
-                    'ruta'           => $rutaCurriculumGuardada,
-                ]);
-                $idOferente = (int)$pdo->lastInsertId();
-
-                registrarBitacora($pdo, 'Registro de nuevo oferente:', [
-                    'id_oferente'         => $idOferente,
-                    'identificacion'      => $identificacion,
-                    'tipo_identificacion' => $tipoIdentificacion,
-                    'nombre_completo'     => $nombreCompleto,
-                    'fecha_nacimiento'    => $fechaNacimiento,
-                    'ruta_curriculum'     => $rutaCurriculumGuardada,
-                ]);
+                $errores['general'] = $resultado['Mensaje'];
+                if ($rutaCurriculumGuardada && file_exists(__DIR__ . '/../' . $rutaCurriculumGuardada)) {
+                    unlink(__DIR__ . '/../' . $rutaCurriculumGuardada);
+                }
             }
-
-            $stmtCorreo = $pdo->prepare("INSERT INTO oferente_correo (id_oferente, correo) VALUES (:id, :correo)");
-            foreach ($correos as $correo) {
-                $stmtCorreo->execute(['id' => $idOferente, 'correo' => $correo]);
-            }
-
-            $stmtTelefono = $pdo->prepare("INSERT INTO oferente_telefono (id_oferente, telefono) VALUES (:id, :telefono)");
-            foreach ($telefonos as $telefono) {
-                $stmtTelefono->execute(['id' => $idOferente, 'telefono' => $telefono]);
-            }
-
-            $pdo->prepare("
-                INSERT IGNORE INTO oferente_concurso (id_oferente, id_concurso)
-                VALUES (:id_oferente, :id_concurso)
-            ")->execute(['id_oferente' => $idOferente, 'id_concurso' => $idConcurso]);
-
-            $pdo->commit();
-            $guardadoExitoso = true;
 
         } catch (Throwable $e) {
-            if ($pdo->inTransaction()) {
-                $pdo->rollBack();
-            }
             if ($rutaCurriculumGuardada && file_exists(__DIR__ . '/../' . $rutaCurriculumGuardada)) {
                 unlink(__DIR__ . '/../' . $rutaCurriculumGuardada);
-            }
-            try {
-                registrarBitacora($pdo, 'Error técnico en participar.php:', [
-                    'mensaje'        => $e->getMessage(),
-                    'identificacion' => $identificacion,
-                ]);
-            } catch (Throwable $eBitacora) {
-                // Si ni la bitácora se pudo escribir, no hacemos nada más:
-                // no queremos que un fallo de logging tumbe la pantalla.
             }
             $errores['general'] = 'Ocurrió un error al guardar la información. Intente nuevamente.';
         }

@@ -8,3 +8,6 @@ define(
     'URL_SERVICIO_AUTENTICACION',
     'http://localhost:50898/ServicioAutenticacion.svc'
 );
+
+// URL especifica del servicio de oferentes (CORE5)
+define('URL_SERVICIO_OFERENTES', WS_BASE_URL . '/ServicioOferentes.svc');
