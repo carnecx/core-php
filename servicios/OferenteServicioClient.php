@@ -2,6 +2,21 @@
 
 require_once __DIR__ . '/../config/config.php';
 
+function obtenerElegiblesPorPuesto(string $codigoPuesto): array
+{
+    $url = URL_SERVICIO_OFERENTES . '/ObtenerElegibles/' . urlencode($codigoPuesto);
+
+    $respuestaJson = @file_get_contents($url);
+
+    if ($respuestaJson === false) {
+        return [];
+    }
+
+    $oferentes = json_decode($respuestaJson, true);
+
+    return $oferentes ?? [];
+}
+
 function registrarOferente(array $datos): array
 {
     $url = URL_SERVICIO_OFERENTES . '/RegistrarOferente';

@@ -19,7 +19,7 @@ require_once __DIR__ . '/../plantilla/header.php';
         <?php foreach ($puestos as $puesto): ?>
             <tr>
                 <td>
-                    <a href="oferentes.php?id_puesto=<?= urlencode($puesto['IdPuesto']) ?>">
+                    <a href="oferentes.php?codigo_puesto=<?= urlencode($puesto['Codigo']) ?>">
                         <?= htmlspecialchars($puesto['Nombre']) ?>
                     </a>
                 </td>
