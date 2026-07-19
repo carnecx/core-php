@@ -47,8 +47,16 @@ require_once __DIR__ . '/../plantilla/header.php';
             <?php endif; ?>
             <?php foreach ($oferentes as $oferente): ?>
                 <tr>
-                    <td><?= htmlspecialchars($oferente['Identificacion']) ?></td>
-                    <td><?= htmlspecialchars($oferente['NombreCompleto']) ?></td>
+                    <td>
+                        <a href="detalle.php?id=<?= urlencode($oferente['Identificacion']) ?>">
+                            <?= htmlspecialchars($oferente['Identificacion']) ?>
+                        </a>
+                    </td>
+                    <td>
+                        <a href="detalle.php?id=<?= urlencode($oferente['Identificacion']) ?>">
+                            <?= htmlspecialchars($oferente['NombreCompleto']) ?>
+                        </a>
+                    </td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
