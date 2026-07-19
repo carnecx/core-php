@@ -1,32 +1,18 @@
 <?php
 
-require_once __DIR__ . '/../config/db.php';
+require_once __DIR__ . '/../servicios/PuestoServicioClient.php';
 require_once __DIR__ . '/../servicios/OferenteServicioClient.php';
 
-$pdo = obtenerConexion();
-
-// ------------------------------------------------------------
-// 1. Obtener el concurso/puesto sobre el cual se participa
-// ------------------------------------------------------------
 $idConcurso = filter_input(INPUT_GET, 'id_concurso', FILTER_VALIDATE_INT)
     ?: filter_input(INPUT_POST, 'id_concurso', FILTER_VALIDATE_INT);
 
 $concurso = null;
 
 if ($idConcurso) {
-    $stmt = $pdo->prepare("
-        SELECT c.id_concurso, c.codigo AS codigo_concurso, c.estado,
-               p.id_puesto, p.nombre AS nombre_puesto
-        FROM concurso c
-        INNER JOIN puesto p ON p.id_puesto = c.id_puesto
-        WHERE c.id_concurso = :id
-    ");
-    $stmt->execute(['id' => $idConcurso]);
-    $concurso = $stmt->fetch();
+    $concurso = obtenerConcursoPorId($idConcurso);
 }
 
-// Si no existe el concurso o ya no está vigente, no se puede participar
-if (!$concurso || $concurso['estado'] !== 'Vigente') {
+if (!$concurso || $concurso['Estado'] !== 'Vigente') {
     require_once __DIR__ . '/../plantilla/header_publico.php';
     ?>
     <div class="tarjeta">
@@ -40,9 +26,6 @@ if (!$concurso || $concurso['estado'] !== 'Vigente') {
     exit;
 }
 
-// ------------------------------------------------------------
-// 2. Procesar el envío del formulario
-// ------------------------------------------------------------
 $errores = [];
 $guardadoExitoso = false;
 
@@ -107,7 +90,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
     }
 
-    $rutaCurriculumGuardada = null;
     $extension              = null;
     $extensionesPermitidas  = ['pdf', 'doc', 'docx'];
     $tamanoMaximoBytes      = 5 * 1024 * 1024; 
@@ -129,30 +111,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($errores)) {
         try {
-            $nombreArchivo = 'cv_' . preg_replace('/[^A-Za-z0-9]/', '', $identificacion)
-                . '_' . time() . '.' . $extension;
-            $rutaDestino = RUTA_CURRICULUMS . $nombreArchivo;
-
-            if (!is_dir(RUTA_CURRICULUMS)) {
-                mkdir(RUTA_CURRICULUMS, 0755, true);
+            $contenidoCurriculum = file_get_contents($_FILES['curriculum']['tmp_name']);
+            if ($contenidoCurriculum === false) {
+                throw new RuntimeException('No fue posible leer el archivo del curriculum.');
             }
 
-            if (!move_uploaded_file($_FILES['curriculum']['tmp_name'], $rutaDestino)) {
-                throw new RuntimeException('No fue posible guardar el archivo del curriculum.');
-            }
-
-            $rutaCurriculumGuardada = 'uploads/curriculums/' . $nombreArchivo;
-
-            // Preparar datos para el servicio
             $datosOferente = [
-                'Identificacion'     => $identificacion,
-                'TipoIdentificacion' => $tipoIdentificacion,
-                'NombreCompleto'     => $nombreCompleto,
-                'FechaNacimiento'    => $fechaNacimiento,
-                'Correos'            => $correos,
-                'Telefonos'          => $telefonos,
-                'RutaCurriculum'     => $rutaCurriculumGuardada,
-                'CodigoConcurso'     => $concurso['codigo_concurso'],
+                'Identificacion'         => $identificacion,
+                'TipoIdentificacion'     => $tipoIdentificacion,
+                'NombreCompleto'         => $nombreCompleto,
+                'FechaNacimiento'        => $fechaNacimiento,
+                'Correos'                => $correos,
+                'Telefonos'              => $telefonos,
+                'CodigoConcurso'         => $concurso['CodigoConcurso'],
+                'CurriculumBase64'       => base64_encode($contenidoCurriculum),
+                'CurriculumNombreArchivo'=> $_FILES['curriculum']['name'],
             ];
 
             $resultado = registrarOferente($datosOferente);
@@ -161,15 +134,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $guardadoExitoso = true;
             } else {
                 $errores['general'] = $resultado['Mensaje'];
-                if ($rutaCurriculumGuardada && file_exists(__DIR__ . '/../' . $rutaCurriculumGuardada)) {
-                    unlink(__DIR__ . '/../' . $rutaCurriculumGuardada);
-                }
             }
 
         } catch (Throwable $e) {
-            if ($rutaCurriculumGuardada && file_exists(__DIR__ . '/../' . $rutaCurriculumGuardada)) {
-                unlink(__DIR__ . '/../' . $rutaCurriculumGuardada);
-            }
             $errores['general'] = 'Ocurrió un error al guardar la información. Intente nuevamente.';
         }
     }
@@ -189,7 +156,7 @@ require_once __DIR__ . '/../plantilla/header_publico.php';
     <h1>Formulario de participación</h1>
 
     <div class="subtitulo-puesto">
-        Está participando por el puesto: <strong><?= htmlspecialchars($concurso['nombre_puesto']) ?></strong>
+        Está participando por el puesto: <strong><?= htmlspecialchars($concurso['NombrePuesto']) ?></strong>
     </div>
 
     <?php if (!empty($errores['general'])): ?>
