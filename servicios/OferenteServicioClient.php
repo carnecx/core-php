@@ -4,7 +4,7 @@ require_once __DIR__ . '/../config/config.php';
 
 function obtenerElegiblesPorPuesto(string $codigoPuesto): array
 {
-    $url = URL_SERVICIO_OFERENTES . '/ObtenerElegibles/' . urlencode($codigoPuesto);
+    $url = WS_BASE_URL . '/ServicioOferentes.svc/ObtenerElegibles/' . urlencode($codigoPuesto);
 
     $respuestaJson = @file_get_contents($url);
 
@@ -19,7 +19,7 @@ function obtenerElegiblesPorPuesto(string $codigoPuesto): array
 
 function registrarOferente(array $datos): array
 {
-    $url = URL_SERVICIO_OFERENTES . '/RegistrarOferente';
+    $url = WS_BASE_URL . '/ServicioOferentes.svc/RegistrarOferente';
 
     $opciones = [
         'http' => [

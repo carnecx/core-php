@@ -9,7 +9,7 @@ class AutenticacionServicioClient
     public function __construct()
     {
         $this->cliente = new SoapClient(
-            URL_SERVICIO_AUTENTICACION . '?wsdl',
+            WS_BASE_URL . '/ServicioAutenticacion.svc?wsdl',
             [
                 'trace' => true,
                 'exceptions' => true,
