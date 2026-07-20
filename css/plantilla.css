@@ -22,13 +22,13 @@ body{
         );
 }
 
-/* Layout general: menu lateral + area derecha */
+/* layout general: menu lateral + area derecha */
 .layout-core{
     display:flex;
     min-height:100vh;
 }
 
-/* Menu lateral izquierdo */
+/* menu lateral izquierdo */
 .menu-lateral{
     width:250px;
     background:#fff;
@@ -81,7 +81,7 @@ body{
     color:#1269d3;
 }
 
-/* Area derecha: header superior + contenido */
+/* area derecha: header superior + contenido */
 .area-derecha{
     flex:1;
     display:flex;
@@ -91,32 +91,71 @@ body{
 .header-core{
     background:#fff;
     border-bottom:1px solid #dce8f2;
-    padding:16px 30px;
+    padding:14px 30px;
     display:flex;
     justify-content:flex-end;
+    align-items:center;
+    min-height:74px;
 }
 
+/* contenedor del usuario */
 .header-usuario{
     display:flex;
     align-items:center;
     gap:12px;
 }
 
+/* avatar circular del usuario */
+.usuario-avatar{
+    width:42px;
+    height:42px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:linear-gradient(
+        135deg,
+        #1269d3,
+        #2385ea
+    );
+    color:#fff;
+    font-size:18px;
+    font-weight:800;
+    text-transform:uppercase;
+    box-shadow:0 4px 12px rgba(18,105,211,.22);
+}
+
+/* nombre y rol del usuario */
+.usuario-informacion{
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    gap:3px;
+    min-width:120px;
+}
+
 .usuario-nombre{
     color:#1d2d3c;
     font-weight:700;
     font-size:15px;
+    line-height:1.2;
 }
 
 .usuario-rol{
     color:#6a7785;
-    font-size:14px;
+    font-size:13px;
+    line-height:1.2;
 }
 
 .boton-logout{
+    margin-left:8px;
     padding:8px 16px;
     border-radius:10px;
-    background:linear-gradient(90deg,#1269d3,#2385ea);
+    background:linear-gradient(
+        90deg,
+        #1269d3,
+        #2385ea
+    );
     color:#fff;
     text-decoration:none;
     font-size:14px;
@@ -141,7 +180,7 @@ body{
     font-weight:800;
 }
 
-/* Tabla de puestos */
+/* tabla de puestos */
 .tabla-puestos{
     width:100%;
     max-width:600px;
@@ -202,6 +241,24 @@ body{
         width:100%;
         border-right:none;
         border-bottom:1px solid #dce8f2;
+    }
+
+    .header-core{
+        padding:12px 18px;
+    }
+
+    .header-usuario{
+        width:100%;
+        flex-wrap:wrap;
+        justify-content:flex-end;
+    }
+
+    .usuario-informacion{
+        min-width:0;
+    }
+
+    .boton-logout{
+        margin-left:0;
     }
 
 }
