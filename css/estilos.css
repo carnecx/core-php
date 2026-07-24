@@ -141,91 +141,77 @@ body.pagina-login{
     box-shadow:0 10px 22px rgba(18,105,211,.30);
 }
 
+
 /* pagina de bienvenida */
-.pagina-bienvenida .contenedor-principal{
-    min-height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    padding:30px;
-}
-
-.pagina-bienvenida .tarjeta-bienvenida{
-    width:100%;
-    max-width:760px;
-    background:#fff;
-    border-radius:22px;
-    box-shadow:0 18px 45px rgba(29,78,121,.18);
-    overflow:hidden;
-}
-
-.pagina-bienvenida .encabezado-medico{
-    text-align:center;
+.pagina-bienvenida .contenido-principal{
     padding:35px;
-    background:#eef8ff;
-    border-bottom:1px solid #dce8f2;
 }
 
-.pagina-bienvenida .logo-medico{
-    width:140px;
-    height:140px;
-    object-fit:contain;
-    margin-bottom:15px;
-}
-
-.pagina-bienvenida .titulo-principal{
-    margin:0;
+.pagina-bienvenida .contenido-principal h1{
+    margin:0 0 25px;
     color:#173b66;
-    font-size:34px;
-    font-weight:bold;
-}
-
-.pagina-bienvenida .subtitulo{
-    margin-top:10px;
-    color:#6a7785;
-    font-size:17px;
-}
-
-.pagina-bienvenida .contenido{
-    padding:35px;
+    font-size:32px;
+    font-weight:800;
 }
 
 .pagina-bienvenida .mensaje-exito{
     display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:12px;
-    padding:16px;
-    margin-bottom:25px;
-    border-radius:10px;
+    align-items:flex-start;
+    gap:15px;
+    padding:20px 24px;
+    margin-bottom:22px;
+    border-radius:14px;
     background:#e9f9f1;
     color:#11865b;
-    font-weight:bold;
+    border:1px solid #d5f1e4;
 }
 
 .pagina-bienvenida .mensaje-exito i{
-    font-size:24px;
+    margin-top:1px;
+    font-size:27px;
+}
+
+.pagina-bienvenida .mensaje-exito strong{
+    display:block;
+    margin-bottom:6px;
+    font-size:16px;
+}
+
+.pagina-bienvenida .mensaje-exito p{
+    margin:0;
+    color:#365b50;
+    font-size:14px;
+    line-height:1.5;
+}
+
+.pagina-bienvenida .resumen-usuario{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:18px;
+    margin-bottom:18px;
 }
 
 .pagina-bienvenida .dato{
     display:flex;
     align-items:center;
     gap:18px;
-    margin-bottom:18px;
-    padding:18px;
+    min-height:105px;
+    padding:20px;
     border:1px solid #dde6ef;
-    border-radius:14px;
-    background:#fafcff;
+    border-radius:15px;
+    background:#fff;
+    box-shadow:0 6px 18px rgba(29,78,121,.07);
 }
 
 .pagina-bienvenida .icono{
-    width:55px;
-    height:55px;
+    width:58px;
+    height:58px;
+    flex-shrink:0;
     display:flex;
     justify-content:center;
     align-items:center;
     border-radius:50%;
-    font-size:24px;
+    font-size:25px;
 }
 
 .pagina-bienvenida .icono-usuario{
@@ -239,34 +225,188 @@ body.pagina-login{
 }
 
 .pagina-bienvenida .titulo{
-    font-weight:bold;
     color:#5c6c7b;
+    font-size:15px;
+    font-weight:bold;
 }
 
 .pagina-bienvenida .valor{
-    margin-top:4px;
+    margin-top:5px;
     color:#1d2d3c;
+    font-size:19px;
+}
+
+.pagina-bienvenida .paneles-bienvenida{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:18px;
+    margin-bottom:18px;
+}
+
+.pagina-bienvenida .panel-informativo,
+.pagina-bienvenida .panel-accesos{
+    padding:24px;
+    border:1px solid #dde6ef;
+    border-radius:15px;
+    background:#fff;
+    box-shadow:0 6px 18px rgba(29,78,121,.07);
+}
+
+.pagina-bienvenida .encabezado-panel{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:16px;
+    color:#1269d3;
+}
+
+.pagina-bienvenida .encabezado-panel i{
+    font-size:21px;
+}
+
+.pagina-bienvenida .encabezado-panel h2{
+    margin:0;
+    color:#1269d3;
+    font-size:19px;
+    font-weight:800;
+}
+
+.pagina-bienvenida .descripcion-panel{
+    margin:0 0 19px;
+    color:#425466;
+    font-size:14px;
+    line-height:1.6;
+}
+
+.pagina-bienvenida .lista-informacion{
+    padding-top:4px;
+    border-top:1px solid #e6edf4;
+}
+
+.pagina-bienvenida .elemento-informacion{
+    display:flex;
+    align-items:center;
+    gap:13px;
+    padding:12px 2px;
+    color:#304255;
+    font-size:14px;
+}
+
+.pagina-bienvenida .elemento-informacion i{
+    width:24px;
+    flex-shrink:0;
+    text-align:center;
     font-size:18px;
 }
 
-.pagina-bienvenida .boton-salir{
-    display:block;
-    width:100%;
-    margin-top:25px;
-    padding:15px;
-    text-align:center;
-    text-decoration:none;
-    color:#fff;
-    background:linear-gradient(90deg,#1269d3,#2385ea);
-    border-radius:12px;
-    font-size:17px;
-    font-weight:bold;
-    transition:.2s;
+.pagina-bienvenida .icono-azul{
+    color:#1673da;
 }
 
-.pagina-bienvenida .boton-salir:hover{
+.pagina-bienvenida .icono-verde{
+    color:#15a870;
+}
+
+.pagina-bienvenida .icono-naranja{
+    color:#f39c12;
+}
+
+.pagina-bienvenida .tabla-sesion{
+    border-top:1px solid #e6edf4;
+}
+
+.pagina-bienvenida .fila-sesion{
+    display:grid;
+    grid-template-columns:130px 1fr;
+    gap:15px;
+    padding:13px 10px;
+    border-bottom:1px solid #e6edf4;
+    color:#304255;
+    font-size:14px;
+}
+
+.pagina-bienvenida .fila-sesion strong{
+    color:#203750;
+}
+
+.pagina-bienvenida .estado-activo{
+    width:max-content;
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    padding:5px 10px;
+    border-radius:20px;
+    background:#dff7e9;
+    color:#11865b;
+    font-size:13px;
+    font-weight:700;
+}
+
+.pagina-bienvenida .estado-activo i{
+    font-size:8px;
+}
+
+.pagina-bienvenida .panel-accesos{
+    margin-bottom:10px;
+}
+
+.pagina-bienvenida .accesos-rapidos{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:18px;
+}
+
+.pagina-bienvenida .acceso-rapido{
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:18px;
+    border:1px solid #dde6ef;
+    border-radius:13px;
+    color:#1d2d3c;
+    text-decoration:none;
+    background:#fcfdff;
+    transition:transform .2s ease, box-shadow .2s ease, border-color .2s ease;
+}
+
+.pagina-bienvenida .acceso-rapido:hover{
     transform:translateY(-2px);
-    opacity:.95;
+    border-color:#b9d6f5;
+    box-shadow:0 8px 20px rgba(29,78,121,.10);
+}
+
+.pagina-bienvenida .icono-acceso{
+    width:52px;
+    height:52px;
+    flex-shrink:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:50%;
+    font-size:22px;
+}
+
+.pagina-bienvenida .icono-acceso-azul{
+    color:#1269d3;
+    background:#e7f1ff;
+}
+
+.pagina-bienvenida .icono-acceso-verde{
+    color:#159b7e;
+    background:#e8fbf5;
+}
+
+.pagina-bienvenida .acceso-rapido strong{
+    display:block;
+    margin-bottom:5px;
+    color:#173b66;
+    font-size:15px;
+}
+
+.pagina-bienvenida .acceso-rapido span{
+    display:block;
+    color:#6a7785;
+    font-size:13px;
 }
 
 /* plantilla interna del core */
@@ -694,9 +834,38 @@ body.pagina-login{
     .boton-logout{
         margin-left:0;
     }
+
+.pagina-bienvenida .resumen-usuario,
+.pagina-bienvenida .paneles-bienvenida,
+.pagina-bienvenida .accesos-rapidos{
+    grid-template-columns:1fr;
+}
+
+.pagina-bienvenida .contenido-principal{
+    padding:24px 18px;
+}
 }
 
 @media(max-width:600px){
+
+.pagina-bienvenida .dato{
+    flex-direction:row;
+    text-align:left;
+}
+
+.pagina-bienvenida .panel-informativo,
+.pagina-bienvenida .panel-accesos{
+    padding:19px;
+}
+
+.pagina-bienvenida .fila-sesion{
+    grid-template-columns:1fr;
+    gap:6px;
+}
+
+.pagina-bienvenida .contenido-principal h1{
+    font-size:27px;
+}
     .pagina-bienvenida .contenido{
         padding:22px;
     }
