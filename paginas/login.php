@@ -57,11 +57,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <title>Core Servicios Médicos</title>
 
-    <link rel="stylesheet" href="../css/login.css">
+    <link rel="stylesheet" href="../css/estilos.css">
 
 </head>
 
-<body>
+<body class="pagina-login">
 
     <main class="login-card">
 

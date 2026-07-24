@@ -10,6 +10,8 @@ if (!isset($_SESSION['usuario_id'])) {
 $nombreCompleto = $_SESSION['nombre_completo'] ?? 'Usuario';
 $rol = $_SESSION['rol'] ?? 'Sin rol';
 
+$clasePagina = 'pagina-bienvenida';
+
 require_once __DIR__ . '/../plantilla/header.php';
 ?>
 
@@ -17,7 +19,6 @@ require_once __DIR__ . '/../plantilla/header.php';
     href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
     rel="stylesheet"
 >
-<link rel="stylesheet" href="../css/bienvenida.css">
 
 <h1>Bienvenido</h1>
 

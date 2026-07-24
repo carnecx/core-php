@@ -37,11 +37,11 @@ $inicialUsuario = strtoupper(
 
     <link
         rel="stylesheet"
-        href="../css/plantilla.css"
+        href="../css/estilos.css"
     >
 </head>
 
-<body>
+<body class="pagina-core<?= isset($clasePagina) ? ' ' . htmlspecialchars($clasePagina, ENT_QUOTES, 'UTF-8') : '' ?>">
 
 <div class="layout-core">
 
