@@ -1,7 +1,7 @@
 </main>
 
         <footer class="footer-core">
-            <p>Servicios Médicos SA</p>
+            <p>Servicios Médicos XYZ</p>
         </footer>
 
     </div>
